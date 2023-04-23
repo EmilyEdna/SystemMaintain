@@ -1,0 +1,150 @@
+﻿<Window
+    x:Class="System.Maintain.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:hc="https://handyorg.github.io/handycontrol"
+    xmlns:local="clr-namespace:System.Maintain"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="Main"
+    Title="运维管理"
+    Width="1200"
+    Height="800"
+    d:DataContext="{d:DesignInstance local:MainViewModel}"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary Source="/UITheme.xaml" />
+    </Window.Resources>
+    <Window.Background>
+        <ImageBrush ImageSource="/Backgroud.png" />
+    </Window.Background>
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="50" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <hc:ButtonGroup>
+            <Button
+                Height="40"
+                hc:BorderElement.CornerRadius="0"
+                Background="#50FFFFFF"
+                Click="ShowAnimeEvent"
+                Command="{Binding IIS}"
+                Content="产品和服务"
+                FontSize="22"
+                Foreground="{StaticResource PrimaryBrush}" />
+            <Button
+                Height="40"
+                hc:BorderElement.CornerRadius="0"
+                Background="#50FFFFFF"
+                Content="数据库"
+                FontSize="22"
+                Foreground="{StaticResource PrimaryBrush}" />
+            <Button
+                Height="40"
+                hc:BorderElement.CornerRadius="0"
+                Background="#50FFFFFF"
+                Click="ShowAnimeEvent"
+                Command="{Binding Runtime}"
+                Content="运行时"
+                FontSize="22"
+                Foreground="{StaticResource PrimaryBrush}" />
+            <Button
+                Height="40"
+                hc:BorderElement.CornerRadius="0"
+                Background="#50FFFFFF"
+                Content="代理服务"
+                FontSize="22"
+                Foreground="{StaticResource PrimaryBrush}" />
+        </hc:ButtonGroup>
+        <Grid Grid.Row="1">
+            <hc:ElementGroup Height="50" hc:BorderElement.CornerRadius="0">
+                <hc:ElementGroup.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Grid hc:BorderElement.CornerRadius="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                        </Grid>
+                    </ItemsPanelTemplate>
+                </hc:ElementGroup.ItemsPanel>
+                <TextBox
+                    x:Name="Commands"
+                    HorizontalAlignment="Stretch"
+                    hc:BorderElement.CornerRadius="0"
+                    local:WatermarkService.IsWatermarkEnabled="True"
+                    local:WatermarkService.Watermark="自定义系统Cmd命令提示符"
+                    Background="#50FFFFFF"
+                    BorderThickness="1,0,0,1"
+                    FontSize="22"
+                    Foreground="{StaticResource DarkSuccessBrush}"
+                    Style="{StaticResource InputElementBaseStyle}" />
+                <Button
+                    Grid.Column="1"
+                    Width="100"
+                    Height="50"
+                    hc:BorderElement.CornerRadius="-1"
+                    Background="#50FFFFFF"
+                    BorderThickness="1,0,1,1"
+                    Command="{Binding Excutor}"
+                    CommandParameter="{Binding Text, ElementName=Commands}"
+                    Content="执行"
+                    FontSize="22"
+                    Foreground="{StaticResource PrimaryBrush}"
+                    IsDefault="True" />
+            </hc:ElementGroup>
+        </Grid>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="3*" />
+            </Grid.ColumnDefinitions>
+            <ListBox
+                x:Name="listBox"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding NavBar}"
+                RenderTransformOrigin="0.5,0.5"
+                Style="{StaticResource StackPanelVerticalListBox}">
+                <ListBox.RenderTransform>
+                    <TransformGroup>
+                        <TranslateTransform />
+                    </TransformGroup>
+                </ListBox.RenderTransform>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <hc:ButtonGroup Margin="0,5">
+                            <Button
+                                Height="40"
+                                hc:BorderElement.CornerRadius="0"
+                                Background="#50FFFFFF"
+                                Command="{Binding DataContext.Function, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding Key}"
+                                Content="{Binding Value}"
+                                FontSize="22"
+                                Foreground="{StaticResource DangerBrush}" />
+                        </hc:ButtonGroup>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <RichTextBox
+                x:Name="RichBox"
+                Grid.Column="1"
+                hc:BorderElement.CornerRadius="0"
+                Background="#306A788E"
+                BorderThickness="0"
+                FontSize="22"
+                Foreground="{StaticResource DarkSuccessBrush}"
+                IsReadOnly="True"
+                TextChanged="RiseEvent"
+                VerticalScrollBarVisibility="Visible" />
+        </Grid>
+
+    </Grid>
+</Window>

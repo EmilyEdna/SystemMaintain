@@ -40,10 +40,10 @@ namespace System.Maintain
             });
             IIS = new RelayCommand(IISCommand);
             Runtime = new RelayCommand(RuntimeCommand);
+            Proxy = new RelayCommand(ProxyCommand);
             Function = new RelayCommand<int>(HandlerCommand);
             Excutor = new RelayCommand<string>(RunCmdCommand);
         }
-
 
         #region Property
         private ObservableCollection<NavbarNotifyModel> _NavBar;
@@ -65,6 +65,14 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=4,Value="④安装Redis" },
             };
         }
+        private void ProxyCommand()
+        {
+            NavBar = new ObservableCollection<NavbarNotifyModel>
+            {
+                new NavbarNotifyModel{ Key=1,Value="①安装Nignx" },
+            };
+        }
+
         private void IISCommand()
         {
             NavBar = new ObservableCollection<NavbarNotifyModel>
@@ -176,6 +184,7 @@ namespace System.Maintain
         public ICommand IIS { get; }
         public ICommand Excutor { get; }
         public ICommand Runtime { get; }
+        public ICommand Proxy { get; }
         #endregion
 
         #region IIS 方法

@@ -58,6 +58,8 @@
                 Height="40"
                 hc:BorderElement.CornerRadius="0"
                 Background="#50FFFFFF"
+                Click="ShowAnimeEvent"
+                Command="{Binding Proxy}"
                 Content="代理服务"
                 FontSize="22"
                 Foreground="{StaticResource PrimaryBrush}" />

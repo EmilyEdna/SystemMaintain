@@ -175,6 +175,8 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine(NignxStr);
                     break;
                 case HandleEnum.NignxRe:
+                    CommandLine.P.StandardInput.WriteLine("net stop nginx");
+                    CommandLine.P.StandardInput.WriteLine("net start nginx");
                     break;
                 case HandleEnum.Redis:
                     CommandLine.P.StandardInput.WriteLine("cd runtimes");

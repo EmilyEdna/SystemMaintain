@@ -72,6 +72,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                         </Grid>
                     </ItemsPanelTemplate>
@@ -100,6 +101,17 @@
                     FontSize="22"
                     Foreground="{StaticResource PrimaryBrush}"
                     IsDefault="True" />
+                <Button
+                    Grid.Column="2"
+                    Width="100"
+                    Height="50"
+                    hc:BorderElement.CornerRadius="-1"
+                    Background="#50FFFFFF"
+                    BorderThickness="1,0,1,1"
+                    Command="{Binding Clear}"
+                    Content="清屏"
+                    FontSize="22"
+                    Foreground="{StaticResource PrimaryBrush}" />
             </hc:ElementGroup>
         </Grid>
         <Grid Grid.Row="2">

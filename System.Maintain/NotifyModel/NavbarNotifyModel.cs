@@ -9,8 +9,8 @@ namespace System.Maintain.NotifyModel
 {
     public class NavbarNotifyModel : ObservableObject
     {
-        private int _Key;
-        public int Key
+        private HandleEnum _Key;
+        public HandleEnum Key
         {
             get => _Key;
             set => SetProperty(ref _Key, value);

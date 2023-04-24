@@ -27,6 +27,7 @@ namespace System.Maintain
         NET6,
         DirectX,
         WPS,
+        DLL,
         MySql
     }
 }

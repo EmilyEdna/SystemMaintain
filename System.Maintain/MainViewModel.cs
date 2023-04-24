@@ -65,6 +65,7 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=HandleEnum.DirectX,Value="③安装DirectX" },
                 new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="④安装Redis" },
                 new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="⑤安装WPS" },
+                new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="⑥注册DLL" },
             };
         }
         private void ProxyCommand()
@@ -80,7 +81,6 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=HandleEnum.NignxRe,Value="⑦重启Nignx" },
             };
         }
-
         private void IISCommand()
         {
             NavBar = new ObservableCollection<NavbarNotifyModel>
@@ -196,6 +196,24 @@ namespace System.Maintain
                 case HandleEnum.WPS:
                     CommandLine.P.StandardInput.WriteLine("cd runtimes");
                     CommandLine.P.StandardInput.WriteLine("W.P.S.10495.12012.2019.exe /passive");
+                    break;
+                case HandleEnum.DLL:
+                    CommandLine.P.StandardInput.WriteLine("d:");
+                    CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
+                    CommandLine.P.StandardInput.WriteLine("xcopy dlls\\base \"C:\\Windows\\System32\\\" /s/e/y");
+                    CommandLine.P.StandardInput.WriteLine("xcopy dlls\\base \"C:\\Windows\\SysWOW64\\\" /s/e/y");
+                    CommandLine.P.StandardInput.WriteLine("xcopy dlls\\extend \"C:\\Windows\\System32\\\" /s/e/y");
+                    CommandLine.P.StandardInput.WriteLine("xcopy dlls\\extend \"C:\\Windows\\SysWOW64\\\" /s/e/y");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\system32\\msvcp140.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\system32\\vcruntime140.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\system32\\vcruntime140_1.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\system32\\vcruntime140_1d.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\system32\\vcruntime140d.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\msvcp140.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\vcruntime140.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\vcruntime140_1.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\vcruntime140_1d.dll /s");
+                    CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\vcruntime140d.dll /s");
                     break;
                 case HandleEnum.MySql:
                     break;

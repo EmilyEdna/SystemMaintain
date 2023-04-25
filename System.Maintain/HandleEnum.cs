@@ -22,12 +22,15 @@ namespace System.Maintain
         Nignx_ALL,
         Nignx,
         NignxRe,
+        FireWall,
         Redis,
         FrameWork3_5,
         NET6,
         DirectX,
         WPS,
         DLL,
-        MySql
+        MySql,
+        BackMySql,
+        InsertMySql
     }
 }

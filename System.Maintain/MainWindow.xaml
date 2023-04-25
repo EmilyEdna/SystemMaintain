@@ -42,6 +42,8 @@
                 Height="40"
                 hc:BorderElement.CornerRadius="0"
                 Background="#50FFFFFF"
+                Click="ShowAnimeEvent"
+                Command="{Binding MySql}"
                 Content="数据库"
                 FontSize="22"
                 Foreground="{StaticResource PrimaryBrush}" />

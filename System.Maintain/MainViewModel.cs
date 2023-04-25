@@ -9,6 +9,7 @@ using System.Linq;
 using System.Maintain.InputWindow;
 using System.Maintain.NotifyModel;
 using System.Reflection;
+using System.Reflection.PortableExecutable;
 using System.Security.Policy;
 using System.Text;
 using System.Threading;
@@ -17,7 +18,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
-
 
 namespace System.Maintain
 {
@@ -41,6 +41,7 @@ namespace System.Maintain
             IIS = new RelayCommand(IISCommand);
             Runtime = new RelayCommand(RuntimeCommand);
             Proxy = new RelayCommand(ProxyCommand);
+            MySql = new RelayCommand(MySqlCommand);
             Function = new RelayCommand<HandleEnum>(HandlerCommand);
             Excutor = new RelayCommand<string>(RunCmdCommand);
             Clear = new RelayCommand(ClearCommand);
@@ -79,6 +80,7 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=HandleEnum.Nignx_ALL,Value="⑤注册Nignx全部配置" },
                 new NavbarNotifyModel{ Key=HandleEnum.Nignx,Value="⑥安装Nignx" },
                 new NavbarNotifyModel{ Key=HandleEnum.NignxRe,Value="⑦重启Nignx" },
+                new NavbarNotifyModel{ Key=HandleEnum.FireWall,Value="⑧打开防火墙" },
             };
         }
         private void IISCommand()
@@ -94,6 +96,17 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=HandleEnum.DelALL,Value="⑦删除全部产品" }
             };
         }
+
+        private void MySqlCommand()
+        {
+            NavBar = new ObservableCollection<NavbarNotifyModel>
+            {
+                 new NavbarNotifyModel { Key = HandleEnum.BackMySql, Value = "①备份数据" },
+                 new NavbarNotifyModel { Key = HandleEnum.MySql, Value = "②安装MySql" },
+                 new NavbarNotifyModel { Key = HandleEnum.InsertMySql, Value = "③导入数据" }
+            };
+        }
+
         private void HandlerCommand(HandleEnum obj)
         {
             StringBuilder sb = new StringBuilder();
@@ -178,6 +191,11 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine("net stop nginx");
                     CommandLine.P.StandardInput.WriteLine("net start nginx");
                     break;
+                case HandleEnum.FireWall:
+                    CommandLine.P.StandardInput.WriteLine("netsh advfirewall firewall add rule name=\"jjwf\"  protocol=TCP dir=in localport=\"9900-9999,\" action=allow");
+                    CommandLine.P.StandardInput.WriteLine($"schtasks /create /tn startcmp /ru system /sc onlogon /tr {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nginx-1.20.2", "startcmp.bat")}");
+                    CommandLine.P.StandardInput.WriteLine("reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa /v LimitBlankPasswordUse /t REG_DWORD /d 0 /f");
+                    break;
                 case HandleEnum.Redis:
                     CommandLine.P.StandardInput.WriteLine("cd runtimes");
                     CommandLine.P.StandardInput.WriteLine("Redis-x64-3.2.100.msi  /passive");
@@ -216,6 +234,13 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine("regsvr32 %windir%\\SysWOW64\\vcruntime140d.dll /s");
                     break;
                 case HandleEnum.MySql:
+                    InstallMySql();
+                    break;
+                case HandleEnum.BackMySql:
+                    Bak();
+                    break;
+                case HandleEnum.InsertMySql:
+                    Decrypt();
                     break;
                 default:
                     break;
@@ -230,13 +255,13 @@ namespace System.Maintain
         {
             RichBox.Document.Blocks.Clear();
         }
-
         public ICommand Function { get; }
         public ICommand IIS { get; }
         public ICommand Excutor { get; }
         public ICommand Runtime { get; }
         public ICommand Proxy { get; }
         public ICommand Clear { get; }
+        public ICommand MySql { get; }
         #endregion
 
         #region IIS 方法
@@ -306,7 +331,6 @@ namespace System.Maintain
             }
             ExCutorBat(sb, "Install");
         }
-
         void ExCutorBat(StringBuilder sb, string filename)
         {
             var batch = sb.Append("exit 0 \n").ToString();
@@ -319,7 +343,7 @@ namespace System.Maintain
         #endregion
 
         #region Nignx
-        string NignxNode(HandleEnum handle) 
+        string NignxNode(HandleEnum handle)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("upstream sysapinode \n { \n least_conn;");
@@ -428,7 +452,7 @@ namespace System.Maintain
                 sb.Append("\n } \n");
             }
 
-           return sb.ToString();
+            return sb.ToString();
         }
         string NignxHttp(HandleEnum handle)
         {
@@ -632,14 +656,14 @@ namespace System.Maintain
             }
             return sb.ToString();
         }
-        void BuildNignxFile(HandleEnum handle) 
+        void BuildNignxFile(HandleEnum handle)
         {
-            var conf = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nginx-1.20.2","conf", "nginx.conf");
+            var conf = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nginx-1.20.2", "conf", "nginx.conf");
             if (File.Exists(conf) == true) File.Delete(conf);
             File.Create(conf).Dispose();
             using StreamWriter sw = new StreamWriter(conf, true);
 
-            var Config =  NignxConf.Template.Replace("{0}", NignxNode(handle)).Replace("{1}", NignxHttp(handle));
+            var Config = NignxConf.Template.Replace("{0}", NignxNode(handle)).Replace("{1}", NignxHttp(handle));
 
             sw.Write(Config);
         }
@@ -657,5 +681,103 @@ namespace System.Maintain
         }
         #endregion
 
+        #region MySql
+        void Bak()
+        {
+            string BakPath = $"D:\\jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            CommandLine.P.StandardInput.WriteLine("c:");
+            CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-sys.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-cmp.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-crt.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-mect.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-mats.sql")}");
+            CommandLine.P.StandardInput.WriteLine("net stop MySql8");
+            CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
+            CommandLine.P.StandardInput.WriteLine("rmdir /s/q C:\\Program Files\\MySql\\mysql-8.0.25-winx64");
+            CommandLine.P.StandardInput.WriteLine("d:");
+            CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
+            CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
+            Encrypt(Path.Combine(BakPath, "jjwf-sys.sql"), "jjwf-sys.sql");
+            Encrypt(Path.Combine(BakPath, "jjwf-cmp.sql"), "jjwf-cmp.sql");
+            Encrypt(Path.Combine(BakPath, "jjwf-crt.sql"), "jjwf-crt.sql");
+            Encrypt(Path.Combine(BakPath, "jjwf-mect.sql"), "jjwf-mect.sql");
+            Encrypt(Path.Combine(BakPath, "jjwf-mats.sql"), "jjwf-mats.sql");
+        }
+        void InstallMySql()
+        { 
+            CommandLine.P.StandardInput.WriteLine("c:");
+            CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
+            CommandLine.P.StandardInput.WriteLine("mysqld.exe --initialize-insecure");
+            CommandLine.P.StandardInput.WriteLine("mysqld --install MySql8 --defaults-file=\"C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\my.ini\"");
+            CommandLine.P.StandardInput.WriteLine("net start MySql8");
+            CommandLine.P.StandardInput.WriteLine("mysql -uroot -p -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';FLUSH PRIVILEGES;CREATE USER 'root'@'%' IDENTIFIED BY 'mysql';ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;\"");
+            CommandLine.P.StandardInput.WriteLine("mysql -uroot -pjjwf1234, -e \"create database `jjwf-sys`;create database `jjwf-cmp`;create database `jjwf-crt`;create database `jjwf-mect`;create database `jjwf-mats`;\"");
+        }
+        /// <summary>
+        /// 备份Sql并加密
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="name"></param>
+        void Encrypt(string path, string name)
+        {
+            if (!File.Exists(path)) return;
+            StringBuilder sb = new StringBuilder();
+            using StreamReader sr = new StreamReader(path);
+            string str = String.Empty;
+            while ((str = sr.ReadLine()) != null)
+            {
+                sb.Append(str + "\n");
+            }
+            var b64 = LZStringCSharp.LZString.CompressToBase64(sb.ToString());
+            string BakPath = $"D:\\jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            if(!Directory.Exists(BakPath))
+               Directory.CreateDirectory(BakPath);
+            var strpath = Path.Combine(BakPath, $"b_{name}");
+            if (File.Exists(strpath) == true) File.Delete(strpath);
+            File.Create(strpath).Dispose();
+            File.WriteAllBytes(strpath, Encoding.Default.GetBytes(b64));
+            File.Delete(path);
+        }
+
+        /// <summary>
+        /// 导入加密的SQL
+        /// </summary>
+        void Decrypt() 
+        {
+            CommandLine.P.StandardInput.WriteLine("c:");
+            CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
+            List<string> name = new List<string>
+            {
+            "cmp","crt","mect","mats","sys"
+            };
+            foreach (var item in name)
+            {
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"database", $"jjwf-{item}.sql");
+                var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
+                StringBuilder sb = new StringBuilder();
+                using StreamReader sr = new StreamReader(path);
+                string str = String.Empty;
+                while ((str = sr.ReadLine()) != null)
+                {
+                    sb.Append(str);
+                }
+                var d64 = LZStringCSharp.LZString.DecompressFromBase64(sb.ToString());
+                if (File.Exists(path1)) File.Delete(path1);
+                File.Create(path1).Dispose();
+                File.WriteAllBytes(path1, Encoding.Default.GetBytes(d64));
+                //导入数据
+                CommandLine.P.StandardInput.WriteLine($"mysql -uroot -pjjwf1234, jjwf-{item} < {path1}");
+            }
+            CommandLine.P.StandardInput.WriteLine("@echo 正在执行中");
+            Thread.Sleep(5000);
+            foreach (var item in name)
+            {
+                var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
+                if (File.Exists(path1)) File.Delete(path1);
+            }
+            CommandLine.P.StandardInput.WriteLine("@echo 执行完成");
+        }
+        #endregion
     }
 }

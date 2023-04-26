@@ -201,7 +201,9 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine("Redis-x64-3.2.100.msi  /passive");
                     break;
                 case HandleEnum.FrameWork3_5:
-                    CommandLine.P.StandardInput.WriteLine("cd runtimes");
+                    CommandLine.P.StandardInput.WriteLine("cd runtimes\\net3.5");
+                    var filepath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "runtimes", "net3.5", "install.bat");
+                    CommandLine.CmdBat(filepath);
                     break;
                 case HandleEnum.NET6:
                     CommandLine.P.StandardInput.WriteLine("cd runtimes");
@@ -705,7 +707,7 @@ namespace System.Maintain
             Encrypt(Path.Combine(BakPath, "jjwf-mats.sql"), "jjwf-mats.sql");
         }
         void InstallMySql()
-        { 
+        {
             CommandLine.P.StandardInput.WriteLine("c:");
             CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
             CommandLine.P.StandardInput.WriteLine("mysqld.exe --initialize-insecure");
@@ -731,8 +733,8 @@ namespace System.Maintain
             }
             var b64 = LZStringCSharp.LZString.CompressToBase64(sb.ToString());
             string BakPath = $"D:\\jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
-            if(!Directory.Exists(BakPath))
-               Directory.CreateDirectory(BakPath);
+            if (!Directory.Exists(BakPath))
+                Directory.CreateDirectory(BakPath);
             var strpath = Path.Combine(BakPath, $"b_{name}");
             if (File.Exists(strpath) == true) File.Delete(strpath);
             File.Create(strpath).Dispose();
@@ -743,7 +745,7 @@ namespace System.Maintain
         /// <summary>
         /// 导入加密的SQL
         /// </summary>
-        void Decrypt() 
+        void Decrypt()
         {
             CommandLine.P.StandardInput.WriteLine("c:");
             CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
@@ -753,7 +755,7 @@ namespace System.Maintain
             };
             foreach (var item in name)
             {
-                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"database", $"jjwf-{item}.sql");
+                var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"jjwf-{item}.sql");
                 var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
                 StringBuilder sb = new StringBuilder();
                 using StreamReader sr = new StreamReader(path);

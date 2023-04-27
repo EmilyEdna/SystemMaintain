@@ -695,13 +695,13 @@ namespace System.Maintain
             CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-crt > {Path.Combine(BakPath, "jjwf-crt.sql")}");
             CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-mect > {Path.Combine(BakPath, "jjwf-mect.sql")}");
             CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-mats > {Path.Combine(BakPath, "jjwf-mats.sql")}");
-            //CommandLine.P.StandardInput.WriteLine("net stop MySql8");
-            //CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
-            //CommandLine.P.StandardInput.WriteLine("cd ../..");
-            //CommandLine.P.StandardInput.WriteLine("rmdir /s/q mysql");
-            //CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
-            //CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
-            //CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
+            CommandLine.P.StandardInput.WriteLine("net stop MySql8");
+            CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
+            CommandLine.P.StandardInput.WriteLine("cd ../..");
+            CommandLine.P.StandardInput.WriteLine("rmdir /s/q mysql");
+            CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
+            CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
+            CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
             CommandLine.P.StandardInput.WriteLine("请稍等...");
             Task.Run(async () =>
             {

@@ -713,8 +713,8 @@ namespace System.Maintain
             CommandLine.P.StandardInput.WriteLine("mysqld.exe --initialize-insecure");
             CommandLine.P.StandardInput.WriteLine("mysqld --install MySql8 --defaults-file=\"C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\my.ini\"");
             CommandLine.P.StandardInput.WriteLine("net start MySql8");
-            CommandLine.P.StandardInput.WriteLine("mysql -u root -e \"create database `jjwf-sys`;create database `jjwf-cmp`;create database `jjwf-crt`;create database `jjwf-mect`;create database `jjwf-mats`;\" \n");
-            CommandLine.P.StandardInput.WriteLine("mysql -u root -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';FLUSH PRIVILEGES;\" \n");
+            CommandLine.P.StandardInput.WriteLine("mysql -u root -e \"create database `jjwf-sys`;create database `jjwf-cmp`;create database `jjwf-crt`;create database `jjwf-mect`;create database `jjwf-mats`;\"");
+            CommandLine.P.StandardInput.WriteLine("mysql -u root -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';FLUSH PRIVILEGES;\"");
         }
         /// <summary>
         /// 备份Sql并加密

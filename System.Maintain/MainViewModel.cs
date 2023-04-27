@@ -192,7 +192,7 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine("net start nginx");
                     break;
                 case HandleEnum.FireWall:
-                    CommandLine.P.StandardInput.WriteLine("netsh advfirewall firewall add rule name=\"jjwf\"  protocol=TCP dir=in localport=\"9900-9999,\" action=allow");
+                    CommandLine.P.StandardInput.WriteLine("netsh advfirewall firewall add rule name=\"jjwf\"  protocol=TCP dir=in localport=\"9000-9999,\" action=allow");
                     CommandLine.P.StandardInput.WriteLine($"schtasks /create /tn startcmp /ru system /sc onlogon /tr {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nginx-1.20.2", "startcmp.bat")}");
                     CommandLine.P.StandardInput.WriteLine("reg add HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Lsa /v LimitBlankPasswordUse /t REG_DWORD /d 0 /f");
                     break;
@@ -351,7 +351,7 @@ namespace System.Maintain
             sb.Append("upstream sysapinode \n { \n least_conn;");
             for (int index = 1; index <= 4; index++)
             {
-                sb.Append($"\n server www.jjwf.com:{9990 + index};");
+                sb.Append($"\n server www.jjwf.com:{10095 - (index * 100)};");
             }
             sb.Append("\n } \n");
 
@@ -361,7 +361,7 @@ namespace System.Maintain
                 sb.Append("upstream cmpapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9980 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
             }
@@ -372,18 +372,18 @@ namespace System.Maintain
                 sb.Append("upstream cmpapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9980 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
                 //ccrt
                 sb.Append("upstream crtapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9970 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10083 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
-                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9979 \n }\n");
-                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9978 \n }\n");
+                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982 \n }\n");
+                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981 \n }\n");
             }
 
             if (handle == HandleEnum.Nignx_MATS)
@@ -392,7 +392,7 @@ namespace System.Maintain
                 sb.Append("upstream cmpapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9980 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
 
@@ -400,7 +400,7 @@ namespace System.Maintain
                 sb.Append("upstream matsapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9960 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10098 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
             }
@@ -411,7 +411,7 @@ namespace System.Maintain
                 sb.Append("upstream mectapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9950 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10093 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
             }
@@ -422,7 +422,7 @@ namespace System.Maintain
                 sb.Append("upstream cmpapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9980 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
 
@@ -430,18 +430,18 @@ namespace System.Maintain
                 sb.Append("upstream crtapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9970 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10083 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
-                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9979 \n }\n");
-                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9978 \n }\n");
+                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982 \n }\n");
+                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981 \n }\n");
 
 
                 //mats
-                sb.Append("upstreammatsapinode \n { \n least_conn;");
+                sb.Append("upstream matsapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9960 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10098 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
 
@@ -449,7 +449,7 @@ namespace System.Maintain
                 sb.Append("upstream mectapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
                 {
-                    sb.Append($"\n server www.jjwf.com:{9950 + index};");
+                    sb.Append($"\n server www.jjwf.com:{10093 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
             }

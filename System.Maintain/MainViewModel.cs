@@ -761,14 +761,14 @@ namespace System.Maintain
             CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
             List<string> name = new List<string>
             {
-            "cmp","crt","mect","mats","sys"
+            "sys"
             };
             foreach (var item in name)
             {
                 var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"jjwf-{item}.sql");
                 var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
                 StringBuilder sb = new StringBuilder();
-                using StreamReader sr = new StreamReader(path);
+                using StreamReader sr = new StreamReader(path1);
                 string str = String.Empty;
                 while ((str = sr.ReadLine()) != null)
                 {
@@ -777,17 +777,18 @@ namespace System.Maintain
                 sr.Close();
                 sr.Dispose();
                 var d64 = LZStringCSharp.LZString.DecompressFromBase64(sb.ToString());
-                if (File.Exists(path1)) File.Delete(path1);
-                File.Create(path1).Dispose();
-                File.WriteAllBytes(path1, Encoding.Default.GetBytes(d64));
+                if (File.Exists(path)) File.Delete(path);
+                File.Create(path).Dispose();
+                File.WriteAllBytes(path, Encoding.Default.GetBytes(d64));
                 //导入数据
-                CommandLine.P.StandardInput.WriteLine($"mysql -uroot -pjjwf1234, jjwf-{item} < {path1}");
+                CommandLine.P.StandardInput.WriteLine($"mysql -uroot -pjjwf1234, -e \"DROP DATABASE IF EXISTS `jjwf-{item}`;CREATE DATABASE `jjwf-{item}`;\"");
+                CommandLine.P.StandardInput.WriteLine($"mysql -uroot -pjjwf1234, jjwf-{item} < {path}");
             }
             CommandLine.P.StandardInput.WriteLine("正在执行中");
             Thread.Sleep(5000);
             foreach (var item in name)
             {
-                var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
+                var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"jjwf-{item}.sql");
                 if (File.Exists(path1)) File.Delete(path1);
             }
             CommandLine.P.StandardInput.WriteLine("执行完成");

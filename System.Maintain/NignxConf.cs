@@ -39,10 +39,11 @@ http {
          {1}
 
        error_page   500 502 503 504  /50x.html;
-        l ocation = /50x.html {
+       location = /50x.html
+        {
             root   html;
-             }
-        }
+         }
+      }
 }";
     }
 }

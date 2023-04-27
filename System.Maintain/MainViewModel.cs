@@ -687,24 +687,33 @@ namespace System.Maintain
         void Bak()
         {
             string BakPath = $"{Div}jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            if (!Directory.Exists(BakPath)) Directory.CreateDirectory(BakPath);
             CommandLine.P.StandardInput.WriteLine("c:");
             CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
             CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-sys.sql")}");
-            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-cmp.sql")}");
-            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-crt.sql")}");
-            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-mect.sql")}");
-            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-mats.sql")}");
-            CommandLine.P.StandardInput.WriteLine("net stop MySql8");
-            CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
-            CommandLine.P.StandardInput.WriteLine("rmdir /s/q C:\\Program Files\\MySql\\mysql-8.0.25-winx64");
-            CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
-            CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
-            CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
-            Encrypt(Path.Combine(BakPath, "jjwf-sys.sql"), "jjwf-sys.sql");
-            Encrypt(Path.Combine(BakPath, "jjwf-cmp.sql"), "jjwf-cmp.sql");
-            Encrypt(Path.Combine(BakPath, "jjwf-crt.sql"), "jjwf-crt.sql");
-            Encrypt(Path.Combine(BakPath, "jjwf-mect.sql"), "jjwf-mect.sql");
-            Encrypt(Path.Combine(BakPath, "jjwf-mats.sql"), "jjwf-mats.sql");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-cmp > {Path.Combine(BakPath, "jjwf-cmp.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-crt > {Path.Combine(BakPath, "jjwf-crt.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-mect > {Path.Combine(BakPath, "jjwf-mect.sql")}");
+            CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-mats > {Path.Combine(BakPath, "jjwf-mats.sql")}");
+            //CommandLine.P.StandardInput.WriteLine("net stop MySql8");
+            //CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
+            //CommandLine.P.StandardInput.WriteLine("cd ../..");
+            //CommandLine.P.StandardInput.WriteLine("rmdir /s/q mysql");
+            //CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
+            //CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
+            //CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
+            CommandLine.P.StandardInput.WriteLine("请稍等...");
+            Task.Run(async () =>
+            {
+                await Task.Delay(10000);
+                Encrypt(Path.Combine(BakPath, "jjwf-sys.sql"), "jjwf-sys.sql", BakPath);
+                Encrypt(Path.Combine(BakPath, "jjwf-cmp.sql"), "jjwf-cmp.sql", BakPath);
+                Encrypt(Path.Combine(BakPath, "jjwf-crt.sql"), "jjwf-crt.sql", BakPath);
+                Encrypt(Path.Combine(BakPath, "jjwf-mect.sql"), "jjwf-mect.sql", BakPath);
+                Encrypt(Path.Combine(BakPath, "jjwf-mats.sql"), "jjwf-mats.sql", BakPath);
+                CommandLine.P.StandardInput.WriteLine("执行完成");
+            });
+          
         }
         void InstallMySql()
         {
@@ -721,7 +730,7 @@ namespace System.Maintain
         /// </summary>
         /// <param name="path"></param>
         /// <param name="name"></param>
-        void Encrypt(string path, string name)
+        void Encrypt(string path, string name,string BakPath)
         {
             if (!File.Exists(path)) return;
             StringBuilder sb = new StringBuilder();
@@ -731,8 +740,9 @@ namespace System.Maintain
             {
                 sb.Append(str + "\n");
             }
+            sr.Close();
+            sr.Dispose();
             var b64 = LZStringCSharp.LZString.CompressToBase64(sb.ToString());
-            string BakPath = $"{Div}jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
             if (!Directory.Exists(BakPath))
                 Directory.CreateDirectory(BakPath);
             var strpath = Path.Combine(BakPath, $"b_{name}");
@@ -764,6 +774,8 @@ namespace System.Maintain
                 {
                     sb.Append(str);
                 }
+                sr.Close();
+                sr.Dispose();
                 var d64 = LZStringCSharp.LZString.DecompressFromBase64(sb.ToString());
                 if (File.Exists(path1)) File.Delete(path1);
                 File.Create(path1).Dispose();
@@ -771,14 +783,14 @@ namespace System.Maintain
                 //导入数据
                 CommandLine.P.StandardInput.WriteLine($"mysql -uroot -pjjwf1234, jjwf-{item} < {path1}");
             }
-            CommandLine.P.StandardInput.WriteLine("@echo 正在执行中");
+            CommandLine.P.StandardInput.WriteLine("正在执行中");
             Thread.Sleep(5000);
             foreach (var item in name)
             {
                 var path1 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database", $"b_jjwf-{item}.sql");
                 if (File.Exists(path1)) File.Delete(path1);
             }
-            CommandLine.P.StandardInput.WriteLine("@echo 执行完成");
+            CommandLine.P.StandardInput.WriteLine("执行完成");
         }
         #endregion
     }

@@ -120,45 +120,45 @@ namespace System.Maintain
                 case HandleEnum.CMP:
                     for (int i = 1; i <= Limit; i++)
                     {
-                        sb.Append(ApiInstall("cmpapi", i, 9980 + i));
+                        sb.Append(ApiInstall("cmpapi", i, 10097 -(i*100)));
                     }
                     ExCutorBat(sb, "CMP");
                     break;
                 case HandleEnum.CCRT:
                     for (int i = 1; i <= Limit; i++)
                     {
-                        sb.Append(ApiInstall("cmpapi", i, 9980 + i));
-                        sb.Append(ApiInstall("crtapi", i, 9970 + i));
+                        sb.Append(ApiInstall("cmpapi", i, 10097 - (i * 100)));
+                        sb.Append(ApiInstall("crtapi", i, 10083 - (i * 100)));
                     }
-                    sb.Append(ApiInstall("crtui", 1, 9979));
-                    sb.Append(ApiInstall("crtapp", 1, 9978));
+                    sb.Append(ApiInstall("crtui", 1, 9982));
+                    sb.Append(ApiInstall("crtapp", 1, 9981));
                     ExCutorBat(sb, "CCRT");
                     break;
                 case HandleEnum.MATS:
                     for (int i = 1; i <= Limit; i++)
                     {
-                        sb.Append(ApiInstall("cmpapi", i, 9980 + i));
-                        sb.Append(ApiInstall("matsapi", i, 9960 + i));
+                        sb.Append(ApiInstall("cmpapi", i, 10097 - (i * 100)));
+                        sb.Append(ApiInstall("matsapi", i, 10098 - (i * 100)));
                     }
                     ExCutorBat(sb, "MATS");
                     break;
                 case HandleEnum.MECT:
                     for (int i = 1; i <= Limit; i++)
                     {
-                        sb.Append(ApiInstall("ectapi", i, 9950 + i));
+                        sb.Append(ApiInstall("ectapi", i, 10093 - (i * 100)));
                     }
                     ExCutorBat(sb, "MECT");
                     break;
                 case HandleEnum.ALL:
                     for (int i = 1; i <= Limit; i++)
                     {
-                        sb.Append(ApiInstall("cmpapi", i, 9980 + i));
-                        sb.Append(ApiInstall("crtapi", i, 9970 + i));
-                        sb.Append(ApiInstall("matsapi", i, 9960 + i));
-                        sb.Append(ApiInstall("ectapi", i, 9950 + i));
+                        sb.Append(ApiInstall("ectapi", i, 10093 - (i * 100)));
+                        sb.Append(ApiInstall("crtapi", i, 10083 - (i * 100)));
+                        sb.Append(ApiInstall("cmpapi", i, 10097 - (i * 100)));
+                        sb.Append(ApiInstall("matsapi", i, 10098 - (i * 100)));
                     }
-                    sb.Append(ApiInstall("crtui", 1, 9979));
-                    sb.Append(ApiInstall("crtapp", 1, 9978));
+                    sb.Append(ApiInstall("crtui", 1, 9982));
+                    sb.Append(ApiInstall("crtapp", 1, 9981));
                     ExCutorBat(sb, "AllProduct");
                     break;
                 case HandleEnum.DelALL:
@@ -329,7 +329,7 @@ namespace System.Maintain
             }
             for (int i = 1; i <= Limit; i++)
             {
-                sb.Append(ApiInstall("sysapi", i, 9990 + i));
+                sb.Append(ApiInstall("sysapi", i, 10095 - (i * 100)));
             }
             ExCutorBat(sb, "Install");
         }

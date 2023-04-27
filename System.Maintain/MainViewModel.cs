@@ -717,9 +717,21 @@ namespace System.Maintain
             CommandLine.P.StandardInput.WriteLine("mysqld --install MySql8 --defaults-file=\"C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\my.ini\"");
             CommandLine.P.StandardInput.WriteLine("net start MySql8");
             UseMysql = true;
-            CommandLine.P.StandardInput.WriteLine("mysql -uroot -p -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';FLUSH PRIVILEGES;CREATE USER 'root'@'%' IDENTIFIED BY 'mysql';ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;\"");
-            CommandLine.P.StandardInput.WriteLine("mysql -uroot -pjjwf1234, -e \"create database `jjwf-sys`;create database `jjwf-cmp`;create database `jjwf-crt`;create database `jjwf-mect`;create database `jjwf-mats`;\"");
+            StringBuilder sb = new StringBuilder();
+            sb.Append("mysql -uroot -p -e \"ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';FLUSH PRIVILEGES;CREATE USER 'root'@'%' IDENTIFIED BY 'mysql';ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'jjwf1234,';GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;FLUSH PRIVILEGES;\" \n");
+            sb.Append("mysql -uroot -pjjwf1234, -e \"create database `jjwf-sys`;create database `jjwf-cmp`;create database `jjwf-crt`;create database `jjwf-mect`;create database `jjwf-mats`;\" \n");
+            var batch = sb.Append("exit 0 \n").ToString();
+            var file = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,   "init.bat");
+            if (File.Exists(file) == true) File.Delete(file);
+            File.Create(file).Dispose();
+            File.WriteAllBytes(file, Encoding.Default.GetBytes(batch));
+            CommandLine.CmdBat(file);
             UseMysql = false;
+            Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                File.Delete(file);
+            });
         }
         /// <summary>
         /// 备份Sql并加密

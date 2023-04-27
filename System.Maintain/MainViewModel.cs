@@ -23,7 +23,7 @@ namespace System.Maintain
 {
     public class MainViewModel : ObservableObject
     {
-
+        private string Div = Path.GetPathRoot(AppDomain.CurrentDomain.BaseDirectory);
         public RichTextBox RichBox { get; set; }
         private int Limit = 4;
         public MainViewModel()
@@ -65,8 +65,8 @@ namespace System.Maintain
                 new NavbarNotifyModel{ Key=HandleEnum.NET6,Value="②安装.Net6" },
                 new NavbarNotifyModel{ Key=HandleEnum.DirectX,Value="③安装DirectX" },
                 new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="④安装Redis" },
-                new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="⑤安装WPS" },
-                new NavbarNotifyModel{ Key=HandleEnum.Redis,Value="⑥注册DLL" },
+                new NavbarNotifyModel{ Key=HandleEnum.WPS,Value="⑤安装WPS" },
+                new NavbarNotifyModel{ Key=HandleEnum.DLL,Value="⑥注册DLL" },
             };
         }
         private void ProxyCommand()
@@ -218,7 +218,7 @@ namespace System.Maintain
                     CommandLine.P.StandardInput.WriteLine("W.P.S.10495.12012.2019.exe /passive");
                     break;
                 case HandleEnum.DLL:
-                    CommandLine.P.StandardInput.WriteLine("d:");
+                    CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
                     CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
                     CommandLine.P.StandardInput.WriteLine("xcopy dlls\\base \"C:\\Windows\\System32\\\" /s/e/y");
                     CommandLine.P.StandardInput.WriteLine("xcopy dlls\\base \"C:\\Windows\\SysWOW64\\\" /s/e/y");
@@ -672,7 +672,7 @@ namespace System.Maintain
         string NignxBuild()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("d: \n");
+            sb.Append($"{Div.Substring(0, 2)} \n");
             sb.Append($"cd {Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "nginx-1.20.2")} \n");
             sb.Append("net stop nginx \n");
             sb.Append("sc delete nginx \n");
@@ -686,7 +686,7 @@ namespace System.Maintain
         #region MySql
         void Bak()
         {
-            string BakPath = $"D:\\jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            string BakPath = $"{Div}jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
             CommandLine.P.StandardInput.WriteLine("c:");
             CommandLine.P.StandardInput.WriteLine("cd C:\\Program Files\\MySql\\mysql-8.0.25-winx64\\bin");
             CommandLine.P.StandardInput.WriteLine($"mysqldump -uroot -pjjwf1234, jjwf-sys > {Path.Combine(BakPath, "jjwf-sys.sql")}");
@@ -697,7 +697,7 @@ namespace System.Maintain
             CommandLine.P.StandardInput.WriteLine("net stop MySql8");
             CommandLine.P.StandardInput.WriteLine("sc delete MySql8");
             CommandLine.P.StandardInput.WriteLine("rmdir /s/q C:\\Program Files\\MySql\\mysql-8.0.25-winx64");
-            CommandLine.P.StandardInput.WriteLine("d:");
+            CommandLine.P.StandardInput.WriteLine($"{Div.Substring(0, 2)} \n");
             CommandLine.P.StandardInput.WriteLine($"cd {AppDomain.CurrentDomain.BaseDirectory}");
             CommandLine.P.StandardInput.WriteLine("xcopy mysql \"C:\\Program Files\\MySql\\\" /s/e/y");
             Encrypt(Path.Combine(BakPath, "jjwf-sys.sql"), "jjwf-sys.sql");
@@ -732,7 +732,7 @@ namespace System.Maintain
                 sb.Append(str + "\n");
             }
             var b64 = LZStringCSharp.LZString.CompressToBase64(sb.ToString());
-            string BakPath = $"D:\\jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            string BakPath = $"{Div}jjwfBaks\\{DateTime.Now.ToString("yyyyMMddHHmmss")}";
             if (!Directory.Exists(BakPath))
                 Directory.CreateDirectory(BakPath);
             var strpath = Path.Combine(BakPath, $"b_{name}");

@@ -122,6 +122,8 @@ namespace System.Maintain
                     {
                         sb.Append(ApiInstall("cmpapi", i, 10097 -(i*100)));
                     }
+                    sb.Append(ApiInstall("cmpui", 1, 9991));
+                    sb.Append(ApiInstall("cmpapp", 1, 9992));
                     ExCutorBat(sb, "CMP");
                     break;
                 case HandleEnum.CCRT:
@@ -159,6 +161,8 @@ namespace System.Maintain
                     }
                     sb.Append(ApiInstall("crtui", 1, 9982));
                     sb.Append(ApiInstall("crtapp", 1, 9981));
+                    sb.Append(ApiInstall("cmpui", 1, 9991));
+                    sb.Append(ApiInstall("cmpapp", 1, 9992));
                     ExCutorBat(sb, "AllProduct");
                     break;
                 case HandleEnum.DelALL:
@@ -364,6 +368,8 @@ namespace System.Maintain
                     sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
+                sb.Append("upstream  cmpuinode \n { \n least_conn; \n server www.jjwf.com:9991; \n }\n\n");
+                sb.Append("upstream  cmpappnode \n { \n least_conn; \n server www.jjwf.com:9992; \n }\n\n");
             }
 
             if (handle == HandleEnum.CCRT)
@@ -382,8 +388,8 @@ namespace System.Maintain
                     sb.Append($"\n server www.jjwf.com:{10083 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
-                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982 \n }\n");
-                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981 \n }\n");
+                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982; \n }\n\n");
+                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981; \n }\n\n");
             }
 
             if (handle == HandleEnum.Nignx_MATS)
@@ -425,7 +431,8 @@ namespace System.Maintain
                     sb.Append($"\n server www.jjwf.com:{10097 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
-
+                sb.Append("upstream  cmpuinode \n { \n least_conn; \n server www.jjwf.com:9991; \n }\n\n");
+                sb.Append("upstream  cmpappnode \n { \n least_conn; \n server www.jjwf.com:9992; \n }\n\n");
                 //ccrt
                 sb.Append("upstream crtapinode \n { \n least_conn;");
                 for (int index = 1; index <= 4; index++)
@@ -433,8 +440,8 @@ namespace System.Maintain
                     sb.Append($"\n server www.jjwf.com:{10083 - (index * 100)};");
                 }
                 sb.Append("\n } \n");
-                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982 \n }\n");
-                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981 \n }\n");
+                sb.Append("upstream  crtuinode \n { \n least_conn; \n server www.jjwf.com:9982; \n }\n\n");
+                sb.Append("upstream  crtappnode \n { \n least_conn; \n server www.jjwf.com:9981; \n }\n\n");
 
 
                 //mats
@@ -487,6 +494,20 @@ namespace System.Maintain
             proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header   X-Forwarded-Proto $scheme;
             proxy_set_header X-Forwarded-Prefix cmpapi;
+        }
+");
+
+                sb.Append(@"
+    location /cmpui/ {
+            index publish.html index.html index.htm;
+            proxy_pass http://cmpuinode/;
+            }
+");
+
+                sb.Append(@"
+    location /cmpapp/ {
+            index publish.html index.html index.htm;
+            proxy_pass http://cmpappnode/;
         }
 ");
             }
@@ -639,6 +660,20 @@ namespace System.Maintain
             proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header   X-Forwarded-Proto $scheme;
             proxy_set_header X-Forwarded-Prefix mectapi;
+        }
+");
+
+                sb.Append(@"
+    location / {
+            index publish.html index.html index.htm;
+            proxy_pass http://cmpuinode/;
+            }
+");
+
+                sb.Append(@"
+    location /train/ {
+            index publish.html index.html index.htm;
+            proxy_pass http://cmpappnode/;
         }
 ");
 
